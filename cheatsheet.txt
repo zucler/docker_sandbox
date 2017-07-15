@@ -1,0 +1,5 @@
+# Run sandbox container
+ docker run --name sandbox -d -it --rm --privileged -p 2222:22 sandbox
+
+# Configure dropbox for the first time
+~/.dropbox-dist/dropboxd
