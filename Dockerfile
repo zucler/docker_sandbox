@@ -1,16 +1,16 @@
 FROM docker:stable-dind
 
-RUN apk update && apk add bash \
+RUN apk update && apk add --no-cache bash \
     util-linux \
-	pciutils \
-	usbutils \
-	coreutils \
-	binutils \
-	findutils \
-	procps \
+    pciutils \
+    usbutils \
+    coreutils \
+    binutils \
+    findutils \
+    procps \
     grep \
     net-tools \
-	iproute2 \
+    iproute2 \
     bridge-utils \
     curl \
     iptables \
@@ -18,45 +18,95 @@ RUN apk update && apk add bash \
     git \
     py-pip \ 
     jq \
-    build-base openssl-dev libffi-dev python-dev \
+    build-base openssl-dev \
+    libffi-dev \
+    python-dev \
     btrfs-progs \
     e2fsprogs \
     xfsprogs \
-	openvswitch \
+    openvswitch \
     xz \
-    jq \
     wget \
     vim \
-    ssh \
-    openssh-server \
-    libglib2.0-0 \
+    openssh \
+    man \
+    ca-certificates \
+    gnupg \
+    glib
 
 RUN ln -f /bin/bash /bin/sh
 
 # We want to run ifconfig from net-tools and ip from iproute2
 # Note that you cannot del /sbin/ip.  the installation of 
 # apk add iproute2 adds a trigger into busybox for the real "ip".
-RUN rm -f /sbin/ifconfig
+#RUN rm -f /sbin/ifconfig
 
-COPY docker-entrypoint.sh /usr/local/bin/
-
-COPY requirements.txt ~
+COPY requirements.txt /root
 RUN pip install --upgrade pip && pip install  -r ~/requirements.txt
-RUN rm -rf /tmp/pip*
 
 # Install Azure CLI
-RUN curl -L https://aka.ms/InstallAzureCli | bash
+RUN pip install azure-batch azure.mgmt azure.mgmt.network
+
+RUN rm -rf /tmp/pip* && rm -f /root/requirements.txt
 
 # Install Dropbox
-RUN cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
-RUN cd /usr/local/bin && wget -O ./dropbox.py "https://www.dropbox.com/download?dl=packages/dropbox.py"
-RUN  chmod +x /usr/local/bin/*
-
+RUN cd /root && wget https://www.dropbox.com/download?dl=packages/dropbox.py -O /usr/local/bin/dropbox-cli \
+    && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf - \
+    && chmod +x /usr/local/bin/dropbox-cli \
+    && chown root:root /usr/local/bin/dropbox-cli
+    
 # Set up sshd
+RUN /usr/bin/ssh-keygen -A
 RUN mkdir /var/run/sshd
+RUN mkdir /root/.ssh/ && touch /root/.ssh/authorized_keys
+RUN touch /var/log/btmp && chmod 660 /var/log/btmp 
 RUN echo 'root:root' |chpasswd
-RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+RUN sed -ri 's/^#PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Here we install GNU libc (aka glibc) and set C.UTF-8 locale as default. This is required to run Dropbox
+RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download" && \
+    ALPINE_GLIBC_PACKAGE_VERSION="2.25-r0" && \
+    ALPINE_GLIBC_BASE_PACKAGE_FILENAME="glibc-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
+    ALPINE_GLIBC_BIN_PACKAGE_FILENAME="glibc-bin-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
+    ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
+    apk add --no-cache --virtual=.build-dependencies wget ca-certificates && \
+    wget \
+        "https://raw.githubusercontent.com/andyshinn/alpine-pkg-glibc/master/sgerrand.rsa.pub" \
+        -O "/etc/apk/keys/sgerrand.rsa.pub" && \
+    wget \
+        "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" && \
+    apk add --no-cache \
+        "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" && \
+    \
+    rm "/etc/apk/keys/sgerrand.rsa.pub" && \
+    /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true && \
+    echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \
+    \
+    apk del glibc-i18n && \
+    \
+    rm "/root/.wget-hsts" && \
+    apk del .build-dependencies && \
+    rm \
+        "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
+        "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
+
+ENV LANG=C.UTF-8
+
+# Installing git-lfs
+RUN cd /tmp && curl -sLO https://github.com/github/git-lfs/releases/download/v2.0.1/git-lfs-linux-amd64-2.0.1.tar.gz \
+    && tar zxvf git-lfs-linux-amd64-2.0.1.tar.gz \
+    && rm -rf git-lfs-2.0.1 \
+    && rm -rf git-lfs-linux-amd64-2.0.1.tar.gz
+
+# docker-entrypoint would start sshd
+COPY docker-entrypoint.sh /usr/local/bin/
+COPY bash_profile /root/.profile
+COPY bashrc /root/.bashrc
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["/usr/sbin/sshd", "-d"]
+CMD ["bash"]
