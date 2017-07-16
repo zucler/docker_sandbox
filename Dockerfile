@@ -31,8 +31,7 @@ RUN apk update && apk add --no-cache bash \
     openssh \
     man \
     ca-certificates \
-    gnupg \
-    glib
+    gnupg
 
 RUN ln -f /bin/bash /bin/sh
 
@@ -96,6 +95,8 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
 
 ENV LANG=C.UTF-8
+
+RUN apk add glib
 
 # Installing git-lfs
 RUN cd /tmp && curl -sLO https://github.com/github/git-lfs/releases/download/v2.0.1/git-lfs-linux-amd64-2.0.1.tar.gz \
