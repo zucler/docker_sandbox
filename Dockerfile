@@ -31,7 +31,8 @@ RUN apk update && apk add --no-cache bash \
     openssh \
     man \
     ca-certificates \
-    gnupg
+    gnupg \
+    screen
 
 RUN ln -f /bin/bash /bin/sh
 
