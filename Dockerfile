@@ -32,7 +32,8 @@ RUN apk update && apk add --no-cache bash \
     man \
     ca-certificates \
     gnupg \
-    screen
+    screen \
+    less
 
 RUN ln -f /bin/bash /bin/sh
 
