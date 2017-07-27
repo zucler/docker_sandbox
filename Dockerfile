@@ -112,5 +112,9 @@ COPY docker-entrypoint.sh /usr/local/bin/
 COPY bash_profile /root/.profile
 COPY bashrc /root/.bashrc
 
+# Install ultimate VIM config
+RUN git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+RUN sh ~/.vim_runtime/install_awesome_vimrc.sh
+
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["bash"]
