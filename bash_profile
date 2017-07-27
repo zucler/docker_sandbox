@@ -10,3 +10,4 @@ export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$
 # Command shortcuts
 alias ls='ls -lF --color=auto'
 alias ll='ls -lFa --color=auto'
+alias grep='grep --color="always"'

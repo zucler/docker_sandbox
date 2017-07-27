@@ -1,5 +1,5 @@
-# Run sandbox container
- docker run --name sandbox -d -it --rm --privileged -p 2222:22 sandbox
+# Run sandbox container with local disk mounted
+docker run -d -it -v c:/Users:/data --name sandbox --privileged -p 2222:22 sandbox
 
-# Configure dropbox for the first time
-~/.dropbox-dist/dropboxd
+# How to install and compile Python autocomplete on VIM:
+https://github.com/Valloric/YouCompleteMe#full-installation-guide
