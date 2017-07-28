@@ -38,7 +38,11 @@ RUN apk update && apk add --no-cache \
     libxt \
     ncurses \
     cmake \
-    cmake-doc
+    cmake-doc \
+    rsync \
+    rsync-doc \
+    ack \
+    ack-doc
 
 RUN ln -f /bin/bash /bin/sh
 
