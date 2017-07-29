@@ -21,3 +21,6 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 set encoding=utf-8
+
+" Set Pylint as default Syntastic python checker 
+let g:syntastic_python_checkers=['pylint']
