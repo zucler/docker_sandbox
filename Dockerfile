@@ -62,15 +62,9 @@ RUN cd /tmp \
     && make install
 
 # Install ultimate VIM config
-RUN git clone https://github.com/amix/vimrc.git ~/.vim_runtime
+RUN git clone https://github.com/zucler/vimrc.git ~/.vim_runtime
 RUN sh ~/.vim_runtime/install_awesome_vimrc.sh
-
-# Install Vundle and plugins
-RUN git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
-# Adding some custom vim modules for Python dev
-COPY vimrc /root 
-RUN cat /root/vimrc >> ~/.vimrc    
+RUN python ~/.vim_runtime/update_plugins.py
 
 # We want to run ifconfig from net-tools and ip from iproute2
 # Note that you cannot del /sbin/ip.  the installation of 
