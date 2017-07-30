@@ -98,6 +98,7 @@ RUN cd /tmp && curl -sLO https://github.com/github/git-lfs/releases/download/v2.
 
 # docker-entrypoint would start sshd
 COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 COPY bash_profile /root/.bash_profile
 COPY bashrc /root/.bashrc
 
