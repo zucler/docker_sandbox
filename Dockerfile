@@ -43,7 +43,8 @@ RUN apk update && apk add --no-cache \
     rsync-doc \
     ack \
     ack-doc \
-    diffutils
+    diffutils \
+    git-doc
 
 RUN ln -f /bin/bash /bin/sh
 
