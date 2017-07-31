@@ -1,5 +1,5 @@
 # Run sandbox container with local disk mounted
-docker run -d -it -v c:/Users:/data --name sandbox --privileged -p 2222:22 sandbox
+docker run -d -it -v /Users:/data --name sandbox --privileged -p 2222:22 sandbox
 
 # How to install and compile Python autocomplete on VIM:
 https://github.com/Valloric/YouCompleteMe#full-installation-guide
