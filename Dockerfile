@@ -98,6 +98,7 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 COPY bash_profile /root/.bash_profile
 COPY bashrc /root/.bashrc
+COPY inputrc /root/.inputrc
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["bash"]
