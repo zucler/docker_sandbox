@@ -61,20 +61,21 @@ RUN cd /tmp \
     --with-python-config-dir=/usr/lib/python2.7/config \
     && make install
 
+COPY requirements.txt /root
+RUN pip install --upgrade pip && pip install  -r ~/requirements.txt
+RUN rm -rf /tmp/pip* && rm -f /root/requirements.txt
+ 
 # Install ultimate VIM config
 RUN git clone https://github.com/zucler/vimrc.git ~/.vim_runtime
 RUN sh ~/.vim_runtime/install_awesome_vimrc.sh
-RUN python ~/.vim_runtime/update_plugins.py
+#RUN python ~/.vim_runtime/update_plugins.py
 
 # We want to run ifconfig from net-tools and ip from iproute2
 # Note that you cannot del /sbin/ip.  the installation of 
 # apk add iproute2 adds a trigger into busybox for the real "ip".
 RUN rm -f /sbin/ifconfig
 
-COPY requirements.txt /root
-RUN pip install --upgrade pip && pip install  -r ~/requirements.txt
-RUN rm -rf /tmp/pip* && rm -f /root/requirements.txt
-    
+   
 # Set up sshd
 RUN /usr/bin/ssh-keygen -A
 RUN mkdir /var/run/sshd
