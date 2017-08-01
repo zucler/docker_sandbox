@@ -12,7 +12,12 @@ export TERM=xterm-256color
 
 # Git autocomplete
 if [ -f ~/.git-completion.bash ]; then
-  . ~/.git-completion.bash
+. ~/.git-completion.bash
+fi
+
+# Docker autocomplete
+if [ -f ~/docker_completion.bash ]; then
+. ~/.docker_completion.bash
 fi
 
 # Command shortcuts

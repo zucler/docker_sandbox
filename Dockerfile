@@ -57,6 +57,9 @@ RUN npm install npm@latest -g
 # Installing git autocomplete
 RUN curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
 
+# Installing docker autocomplete
+RUN curl -L https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker > ~/.docker_completion.bash
+
 # Build Vim
 RUN cd /tmp \
     && git clone https://github.com/vim/vim \
