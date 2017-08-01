@@ -10,6 +10,11 @@ export PS1="\\[\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\
 # Support 256 colours
 export TERM=xterm-256color
 
+# Git autocomplete
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
+
 # Command shortcuts
 alias ls='ls -lF --color=auto'
 alias ll='ls -lFa --color=auto'

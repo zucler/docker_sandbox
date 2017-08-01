@@ -54,6 +54,9 @@ RUN ln -f /bin/bash /bin/sh
 # Update NPM
 RUN npm install npm@latest -g
 
+# Installing git autocomplete
+RUN curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+
 # Build Vim
 RUN cd /tmp \
     && git clone https://github.com/vim/vim \
