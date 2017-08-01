@@ -44,9 +44,15 @@ RUN apk update && apk add --no-cache \
     ack \
     ack-doc \
     diffutils \
-    git-doc
+    git-doc \
+    nodejs \
+    nodejs-doc \
+    nodejs-npm
 
 RUN ln -f /bin/bash /bin/sh
+
+# Update NPM
+RUN npm install npm@latest -g
 
 # Build Vim
 RUN cd /tmp \
