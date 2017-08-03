@@ -23,6 +23,7 @@ RUN apk update && apk add --no-cache \
     screen \
     less \
     build-base \
+    libffi-dev \
     ctags \
     git \
     libx11-dev \
