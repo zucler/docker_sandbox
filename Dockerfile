@@ -114,5 +114,8 @@ COPY bash_profile /root/.bash_profile
 COPY bashrc /root/.bashrc
 COPY inputrc /root/.inputrc
 
+RUN mkdir ~/.config
+COPY flake8 ~/.config/flake8
+
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["bash"]
