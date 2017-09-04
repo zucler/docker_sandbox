@@ -48,8 +48,7 @@ RUN apk update && apk add --no-cache \
     git-doc \
     nodejs \
     nodejs-doc \
-    nodejs-npm \
-    awscurl
+    nodejs-npm
 
 RUN ln -f /bin/bash /bin/sh
 
