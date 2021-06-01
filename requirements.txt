@@ -21,6 +21,6 @@ rsa==3.4.2
 s3transfer==0.1.10
 six==1.10.0
 termcolor==1.1.0
-urllib3==1.21.1
+urllib3==1.26.5
 urllib==1.21.1
 jedi==0.10.2
